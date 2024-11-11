@@ -1,0 +1,85 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+struct Node{
+char ch;
+int freq;
+Node* left;
+Node* right;
+Node(char ch , int freq){
+    this->ch = ch;
+    this->freq = freq;
+    this->left = nullptr;
+    this->right = nullptr;
+}
+ 
+};
+
+struct comp{
+  bool operator()(Node* left,Node* right){
+    return left->freq > right->freq;
+  }  
+};
+
+void generate_the_functions(map<char,string> &codes,Node* root,string code){
+if(root==NULL){
+    return;
+}
+if(root->left==NULL && root->right==NULL){
+    codes[root->ch]=code;
+}
+if(root->right){
+    generate_the_functions(codes,root->right,code+'1');
+}
+if(root->left){
+    generate_the_functions(codes,root->left,code+'0');
+}
+}
+ 
+
+int main(){
+    string str;
+    cout<<"Enter the string : "<<endl;
+    cin>>str;
+    map<char,int> huff_freq;
+     for(auto it:str){
+        huff_freq[it]++;
+     }
+     priority_queue<Node* , vector<Node*>,comp> pq;
+     //inserting all the nodes in the priority queue for the first time 
+
+     
+    for(auto it:huff_freq){
+        Node* temp = new Node(it.first,it.second);
+        pq.push(temp);
+    }
+
+
+   // building the huffman tree 
+
+   while(pq.size()!=1){
+    Node* t1 = pq.top();
+    pq.pop();
+    Node* t2 = pq.top();
+    pq.pop();
+    Node* temp = new Node('#',t1->freq+t2->freq);
+    temp->left=t1;
+    temp->right=t2;
+    pq.push(temp);
+     
+   }
+
+   Node* curr_top = pq.top();
+
+   //answewr 
+   map<char,string> codes;
+   generate_the_functions(codes,curr_top,"");
+
+//printing the codes:
+cout<<"The codes are : ";
+for(auto it:codes){
+    cout<<it.first<<" : "<<it.second<<endl;
+}
+
+    return 0;
+}
